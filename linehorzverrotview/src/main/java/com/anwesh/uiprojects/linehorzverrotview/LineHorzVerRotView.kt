@@ -31,3 +31,30 @@ fun Float.mirrorValue(a : Int, b : Int) : Float {
 }
 fun Float.divideScale(dir : Float, a : Int, b : Int) : Float = mirrorValue(a, b) * dir * scGap
 
+fun Canvas.drawLineHorzRot(i : Int, x : Float, sc1 : Float, sc2 : Float, size : Float, paint : Paint) {
+    val sf : Float = 1f - 2 * (i % 2)
+    val hGap : Float = (2 * size) / lines
+    save()
+    translate(x * sf * (1 - sc1.divideScale(i, lines)), hGap * i)
+    rotate(90f * sc2.divideScale(i, lines))
+    drawLine(0f, 0f, hGap, 0f, paint)
+    restore()
+}
+
+fun Canvas.drawLHVRNode(i : Int, scale : Float, paint : Paint) {
+    val sc1 : Float = scale.divideScale(0, 2)
+    val sc2 : Float = scale.divideScale(1, 2)
+    val w : Float = width.toFloat()
+    val h : Float = height.toFloat()
+    val gap : Float = h / (nodes + 1)
+    val size : Float = gap / sizeFactor
+    paint.color = foreColor
+    paint.strokeWidth = Math.min(w, h) / strokeFactor
+    paint.strokeCap = Paint.Cap.ROUND
+    save()
+    translate(w / 2, gap * (i + 1))
+    for (j in 0..(lines - 1)) {
+        drawLineHorzRot(i, w / 2, sc1, sc2, size, paint)
+    }
+    restore()
+}
