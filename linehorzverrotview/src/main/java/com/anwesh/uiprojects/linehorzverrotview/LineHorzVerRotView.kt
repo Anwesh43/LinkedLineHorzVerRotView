@@ -11,15 +11,17 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Color
+import android.util.Log
 
 val nodes : Int = 5
-val lines : Int = 3
+val lines : Int = 5
 val scGap : Float = 0.05f
 val scDiv : Double = 0.51
 val strokeFactor : Int = 90
-val sizeFactor : Float = 2.9f
+val sizeFactor : Float = 2.5f
 val foreColor : Int = Color.parseColor("#1565C0")
 val backColor : Int = Color.parseColor("#BDBDBD")
+val delay : Long = 15
 
 fun Int.inverse() : Float = 1f / this
 fun Float.scaleFactor() : Float = Math.floor(this / scDiv).toFloat()
@@ -36,8 +38,8 @@ fun Canvas.drawLineHorzRot(i : Int, x : Float, sc1 : Float, sc2 : Float, size : 
     val hGap : Float = (2 * size) / lines
     save()
     translate(x * sf * (1 - sc1.divideScale(i, lines)), hGap * i)
-    rotate(90f * sc2.divideScale(i, lines))
-    drawLine(0f, 0f, hGap, 0f, paint)
+    rotate(90f * sc2.divideScale(i, lines) * sf)
+    drawLine(0f, 0f, hGap * sf, 0f, paint)
     restore()
 }
 
@@ -46,6 +48,9 @@ fun Canvas.drawLHVRNode(i : Int, scale : Float, paint : Paint) {
     val sc2 : Float = scale.divideScale(1, 2)
     val w : Float = width.toFloat()
     val h : Float = height.toFloat()
+    if (scale > 0 && scale < 1) {
+        Log.d("sc1, sc2", "$sc1, $sc2")
+    }
     val gap : Float = h / (nodes + 1)
     val size : Float = gap / sizeFactor
     paint.color = foreColor
@@ -54,7 +59,7 @@ fun Canvas.drawLHVRNode(i : Int, scale : Float, paint : Paint) {
     save()
     translate(w / 2, gap * (i + 1))
     for (j in 0..(lines - 1)) {
-        drawLineHorzRot(i, w / 2, sc1, sc2, size, paint)
+        drawLineHorzRot(j, w / 2, sc1, sc2, size, paint)
     }
     restore()
 }
@@ -103,7 +108,7 @@ class LineHorzVerRotView(ctx : Context) : View(ctx) {
             if (animated) {
                 cb()
                 try {
-                    Thread.sleep(50)
+                    Thread.sleep(delay)
                     view.invalidate()
                 } catch(ex : Exception) {
 
@@ -113,7 +118,7 @@ class LineHorzVerRotView(ctx : Context) : View(ctx) {
 
         fun start() {
             if (!animated) {
-                animated = false
+                animated = true
                 view.postInvalidate()
             }
         }
