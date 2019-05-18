@@ -213,4 +213,13 @@ class LineHorzVerRotView(ctx : Context) : View(ctx) {
             }
         }
     }
+
+    companion object {
+
+        fun create(activity : Activity) : LineHorzVerRotView {
+            val view : LineHorzVerRotView = LineHorzVerRotView(activity)
+            activity.setContentView(view)
+            return view
+        }
+    }
 }
