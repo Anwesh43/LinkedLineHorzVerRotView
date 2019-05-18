@@ -190,4 +190,26 @@ class LineHorzVerRotView(ctx : Context) : View(ctx) {
             curr.startUpdating(cb)
         }
     }
+
+    data class Renderer(var view : LineHorzVerRotView) {
+
+        private val lhvr : LineHorzVerRot = LineHorzVerRot(0)
+        private val animator : Animator = Animator(view)
+
+        fun render(canvas : Canvas, paint : Paint) {
+            canvas.drawColor(backColor)
+            lhvr.draw(canvas, paint)
+            animator.animate {
+                lhvr.update {i, scl ->
+                    animator.stop()
+                }
+            }
+        }
+
+        fun handleTap() {
+            lhvr.startUpdating {
+                animator.start()
+            }
+        }
+    }
 }
